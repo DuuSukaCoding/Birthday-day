@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#170f1b">
+  <title>For Intan — A Birthday Surprise</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap');
+    :root
+    {
+      --bg:#170f1b;
+      --panel:#241724;
+      --pink:#f4a8c8;
+      --rose:#d879a5;
+      --cream:#fff0f5;
+      --muted:#c9aebb;
+      --line:rgba(255,220,237,.13)
+    }
+    *
+    {
+      box-sizing:border-box
+    }
+    html
+    {
+      scroll-behavior:smooth
+    }
+    body
+    {
+      margin:0;
+      min-height:100vh;
+      background:radial-gradient(ellipse at 50% -15%,#56304b 0%,#281827 42%,var(--bg) 78%);
+      color:var(--cream);
+      font-family:'DM Sans',sans-serif;
+      overflow-x:hidden
+    }
+    button
+    {
+      font:inherit;
+      -webkit-tap-highlight-color:transparent;
+      tap-highlight-color:transparent
+    }
+    .stars,.petals
+    {
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:0
+    }
+    .stars:before,.stars:after
+    {
+      content:"";
+      position:absolute;
+      inset:-50%;
+      background-image:radial-gradient(2px 2px at 20% 30%,#fff 45%,transparent 55%),radial-gradient(1px 1px at 70% 20%,#f8b8d4 45%,transparent 55%),radial-gradient(1.5px 1.5px at 85% 75%,#fff 45%,transparent 55%),radial-gradient(1px 1px at 35% 80%,#f8b8d4 45%,transparent 55%);
+      background-size:280px 280px;
+      opacity:.35;
+      will-change:transform;
+      animation:drift 50s linear infinite
+    }
+    .stars:after
+    {
+      background-position:120px 90px;
+      opacity:.2;
+      animation-duration:75s
+    }
+    @keyframes drift
+    {
+      to
+      {
+        transform:translate3d(80px,50px,0)
+      }
+    }
+    .shell
+    {
+      position:relative;
+      z-index:1;
+      max-width:760px;
+      margin:auto;
+      padding:26px 18px 60px
+    }
+    .brand
+    {
+      text-align:center;
+      font-size:.72rem;
+      letter-spacing:.28em;
+      text-transform:uppercase;
+      color:#e6afc8;
+      margin:6px 0 34px
+    }
+    .eyebrow
+    {
+      font-size:.72rem;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      color:var(--pink);
+      font-weight:700
+    }
+    h1,h2,h3,p
+    {
+      margin-top:0
+    }
+    h1,h2,.script
+    {
+      font-family:'Playfair Display',serif
+    }
+    .lock-screen
+    {
+      min-height:calc(100svh - 100px);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:24px 8px 56px
+    }
+    .lock-icon
+    {
+      width:104px;
+      height:104px;
+      border:1px solid rgba(244,168,200,.42);
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      margin:0 auto 28px;
+      background:rgba(244,168,200,.07);
+      box-shadow:0 0 55px rgba(216,121,165,.16);
+      font-size:2.5rem
+    }
+    .lock-screen h1
+    {
+      font-size:clamp(2.25rem,8vw,4.4rem);
+      line-height:1.08;
+      margin:14px 0;
+      color:#fff0f5
+    }
+    .lock-screen h1 em
+    {
+      color:var(--pink);
+      font-weight:500
+    }
+    .sub
+    {
+      max-width:440px;
+      color:var(--muted);
+      line-height:1.8;
+      font-size:.95rem
+    }
+    .countdown
+    {
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:9px;
+      width:min(100%,460px);
+      margin:27px auto 24px
+    }
+    .timebox
+    {
+      padding:15px 5px 13px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:rgba(255,255,255,.045);
+      backdrop-filter:blur(8px)
+    }
+    .timebox strong
+    {
+      display:block;
+      font-size:clamp(1.6rem,6vw,2.35rem);
+      font-weight:600;
+      color:var(--pink);
+      font-variant-numeric:tabular-nums
+    }
+    .timebox span
+    {
+      font-size:.66rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--muted)
+    }
+    .lock-note
+    {
+      font-size:.8rem;
+      color:#c9aebb;
+      line-height:1.7
+    }
+    .content
+    {
+      display:none
+    }
+    .content.unlocked
+    {
+      display:block;
+      animation:fadeUp .9s ease both
+    }
+    @keyframes fadeUp
+    {
+      from
+      {
+        opacity:0;
+        transform:translateY(18px)
+      }
+      to
+      {
+        opacity:1;
+        transform:translateY(0)
+      }
+    }
+    .hero
+    {
+      text-align:center;
+      padding:44px 8px 35px
+    }
+    .hero .cake
+    {
+      font-size:3.3rem;
+      display:block;
+      margin-bottom:15px;
+      filter:drop-shadow(0 0 20px #d879a566)
+    }
+    .hero h1
+    {
+      font-size:clamp(2.6rem,10vw,5rem);
+      line-height:1.03;
+      margin:12px 0
+    }
+    .hero h1 span
+    {
+      display:block;
+      color:var(--pink);
+      font-style:italic
+    }
+    .hero p
+    {
+      color:var(--muted);
+      line-height:1.8
+    }
+    .pill
+    {
+      display:inline-block;
+      border:1px solid rgba(244,168,200,.3);
+      border-radius:99px;
+      padding:8px 14px;
+      color:#f4bfd6;
+      font-size:.75rem;
+      letter-spacing:.08em
+    }
+    .progress-wrap
+    {
+      position:sticky;
+      top:0;
+      z-index:5;
+      padding:12px 0 14px;
+      background:linear-gradient(180deg,rgba(23,15,27,.96),rgba(23,15,27,.75));
+      backdrop-filter:blur(12px)
+    }
+    .progress-top
+    {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      color:var(--muted);
+      font-size:.72rem;
+      margin-bottom:8px
+    }
+    .progress-track
+    {
+      height:4px;
+      border-radius:9px;
+      background:#493144;
+      overflow:hidden
+    }
+    .progress-fill
+    {
+      height:100%;
+      width:0;
+      background:linear-gradient(90deg,#c86e9a,#ffc4dd);
+      transition:width .4s
+    }
+    .heart-nav
+    {
+      display:flex;
+      justify-content:center;
+      gap:8px;
+      margin-top:11px
+    }
+    .heart-nav button
+    {
+      width:29px;
+      height:29px;
+      border:1px solid var(--line);
+      border-radius:50%;
+      background:#2b1a2b;
+      color:#9c7c91;
+      font-size:.75rem;
+      cursor:pointer
+    }
+    .heart-nav button.active,.heart-nav button.visited
+    {
+      border-color:#e99abd;
+      color:#ffd5e7;
+      background:#63334f
+    }
+    .section
+    {
+      display:none;
+      min-height:58vh;
+      padding:38px 4px 25px;
+      animation:fadeUp .45s ease
+    }
+    .section.active
+    {
+      display:block
+    }
+    .section h2
+    {
+      text-align:center;
+      font-size:clamp(2rem,7vw,3rem);
+      margin:10px 0 14px
+    }
+    .section .lead
+    {
+      text-align:center;
+      color:var(--muted);
+      line-height:1.8;
+      max-width:530px;
+      margin:0 auto 28px
+    }
+    .card
+    {
+      background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+      border:1px solid var(--line);
+      border-radius:23px;
+      padding:24px;
+      box-shadow:0 18px 50px rgba(0,0,0,.16)
+    }
+    .birthday-card
+    {
+      text-align:center;
+      padding:30px 22px
+    }
+    .birthday-card .big-heart
+    {
+      font-size:3rem;
+      color:var(--pink);
+      text-shadow:0 0 30px #e98db7
+    }
+    .birthday-card h3
+    {
+      font-family:'Playfair Display',serif;
+      font-size:1.8rem;
+      margin:12px 0;
+      color:#ffe4ef
+    }
+    .birthday-card p
+    {
+      color:var(--muted);
+      line-height:1.85;
+      margin-bottom:0
+    }
+    .gallery
+    {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px
+    }
+    .photo-slot
+    {
+      background:#f8e9ee;
+      color:#4b2a3d;
+      padding:9px 9px 14px;
+      transform:rotate(-2deg);
+      box-shadow:0 12px 28px #0005;
+      border-radius:4px;
+      cursor:pointer
+    }
+    .photo-slot:nth-child(even)
+    {
+      transform:rotate(2deg);
+      margin-top:17px
+    }
+    .photo-slot img
+    {
+      display:block;
+      width:100%;
+      aspect-ratio:4/5;
+      object-fit:cover;
+      background:linear-gradient(135deg,#e8b8cb,#9e6d88)
+    }
+    .photo-slot .placeholder
+    {
+      aspect-ratio:4/5;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:12px;
+      background:linear-gradient(145deg,#e8b8cb,#9e6d88);
+      color:#fff;
+      font-size:.85rem;
+      line-height:1.5
+    }
+    .photo-slot small
+    {
+      display:block;
+      text-align:center;
+      font-family:'Playfair Display',serif;
+      font-style:italic;
+      margin-top:10px;
+      font-size:.9rem
+    }
+    .letter-envelope
+    {
+      max-width:390px;
+      margin:0 auto;
+      text-align:center;
+      cursor:pointer
+    }
+    .envelope
+{
+    font-size:5rem;
+    display:block;
+    filter:drop-shadow(0 10px 20px #0005);
+    transition:transform .3s;
+    -webkit-tap-highlight-color: transparent;
+    tap-highlight-color: transparent;
+    outline: none;
+    user-select: none;
+    -webkit-user-select: none
+  }
+    .letter-envelope {
+    -webkit-tap-highlight-color: transparent;
+    tap-highlight-color: transparent;
+    outline: none;
+    }
+    .letter-envelope:hover .envelope
+    {
+      transform:translateY(-6px)
+    }
+    .letter-paper
+    {
+      display:none;
+      margin-top:22px;
+      text-align:left;
+      background:#fff1f5;
+      color:#57364a;
+      border-radius:12px;
+      padding:25px 22px;
+      line-height:1.9;
+      box-shadow:0 15px 40px #0004
+    }
+    .letter-paper.show
+    {
+      display:block;
+      animation:fadeUp .5s ease
+    }
+    .letter-paper p
+    {
+      margin-bottom:13px
+    }
+    .letter-paper .sign
+    {
+      font-family:'Playfair Display',serif;
+      font-style:italic;
+      color:#a34e79;
+      font-size:1.2rem
+    }
+    .wish-list
+    {
+      display:grid;
+      gap:12px
+    }
+    .wish
+    {
+      display:flex;
+      gap:13px;
+      align-items:flex-start;
+      padding:16px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:#ffffff08;
+      color:#ead8e2;
+      line-height:1.65
+    }
+    .wish b
+    {
+      color:var(--pink);
+      font-size:1.1rem
+    }
+    .final-card
+    {
+      text-align:center;
+      padding:32px 22px
+    }
+    .final-card h3
+    {
+      font-family:'Playfair Display',serif;
+      font-size:clamp(1.7rem,6vw,2.5rem);
+      color:#ffd9e9;
+      line-height:1.3
+    }
+    .final-card p
+    {
+      color:var(--muted);
+      line-height:1.8
+    }
+    .final-heart
+    {
+      font-size:3rem;
+      animation:pulse 1.5s infinite
+    }
+    @keyframes pulse
+    {
+      50%
+      {
+        transform:scale(1.16)
+      }
+    }
+    .controls
+    {
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin:30px 0 10px
+    }
+    .btn
+    {
+      border:1px solid rgba(244,168,200,.35);
+      border-radius:99px;
+      padding:12px 20px;
+      color:#ffe8f1;
+      background:#ffffff0b;
+      cursor:pointer;
+      transition:.2s
+    }
+    .btn.primary
+    {
+      background:linear-gradient(110deg,#b85d88,#e18caf);
+      border:0;
+      color:#271421;
+      font-weight:700;
+      box-shadow:0 8px 24px #d879a544
+    }
+    .btn:disabled
+    {
+      opacity:.3;
+      cursor:not-allowed
+    }
+    .btn:hover:not(:disabled)
+    {
+      transform:translateY(-2px)
+    }
+    .footer
+    {
+      text-align:center;
+      color:#987e90;
+      font-size:.72rem;
+      padding:30px 0 5px
+    }
+    .confetti
+    {
+      position:fixed;
+      top:-12px;
+      width:8px;
+      height:12px;
+      z-index:20;
+      pointer-events:none;
+      contain:layout style;
+      animation:fall linear forwards
+    }
+    @keyframes fall
+    {
+      to
+      {
+        transform:translate3d(0,110vh,0) rotate(720deg);
+        opacity:.2
+      }
+    }
+    @media(max-width:430px)
+    {
+      .shell
+      {
+        padding-left:15px;
+        padding-right:15px
+      }
+      .card
+      {
+        padding:19px
+      }
+      .countdown
+      {
+        gap:6px
+      }
+      .timebox
+      {
+        border-radius:12px;
+        padding:12px 2px
+      }
+      .gallery
+      {
+        gap:10px
+      }
+    }
+    @media(prefers-reduced-motion:reduce)
+    {
+      *,*:before,*:after
+      {
+        animation-duration:.01ms!important;
+        scroll-behavior:auto!important;
+        transition-duration:.01ms!important
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+  <main class="shell">
+    <div class="brand">A little website made with love</div>
+
+    <!-- HALAMAN TERKUNCI: hanya countdown yang terlihat sebelum 24 Nov 2026 00:00 WIB -->
+    <section class="lock-screen" id="lockScreen">
+      <div class="lock-icon">🔒</div>
+      <div class="eyebrow">A birthday surprise for</div>
+      <h1>Something special<br><em>is waiting for you, Sayang.</em></h1>
+      <p class="sub">Ada sesuatu yang mau aku kasih ke kamu. Tapi, kamu harus nunggu sampe hari spesial kamu tiba.</p>
+      <div class="countdown" aria-label="Hitung mundur">
+        <div class="timebox"><strong id="days">00</strong><span>Hari</span></div>
+        <div class="timebox"><strong id="hours">00</strong><span>Jam</span></div>
+        <div class="timebox"><strong id="minutes">00</strong><span>Menit</span></div>
+        <div class="timebox"><strong id="seconds">00</strong><span>Detik</span></div>
+      </div>
+      <p class="lock-note" id="lockNote">Web ini akan terbuka otomatis pada<br><b>24 November 2026 · 00.00 WIB</b></p>
+    </section>
+
+    <!-- SELURUH KONTEN DI BAWAH INI TERKUNCI SAMPAI WAKTU PEMBUKAAN -->
+    <div class="content" id="birthdayContent">
+      <header class="hero">
+        <span class="cake">🎂</span>
+        <span class="pill">24 NOVEMBER 2026 · YOUR DAY</span>
+        <h1>Happy Birthday,<span>Titanya aku!</span></h1>
+        <p>Today is all about you, sayang.<br>Selamat ulang tahun yang ke-20.</p>
+      </header>
+
+      <div class="progress-wrap">
+        <div class="progress-top"><span id="sectionLabel">01 / 06 · Birthday wish</span><span id="progressPercent">17%</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="heart-nav" id="heartNav" aria-label="Navigasi bagian">
+          <button class="active" aria-label="Bagian 1" data-go="0">♥</button>
+          <button aria-label="Bagian 2" data-go="1">♥</button>
+          <button aria-label="Bagian 3" data-go="2">♥</button>
+          <button aria-label="Bagian 4" data-go="3">♥</button>
+          <button aria-label="Bagian 5" data-go="4">♥</button>
+          <button aria-label="Bagian 6" data-go="5">♥</button>
+        </div>
+      </div>
+
+      <section class="section active" data-title="Birthday wish">
+        <div class="eyebrow" style="text-align:center">A day made just for you</div>
+        <h2>It's your special day!</h2>
+        <p class="lead">Hari ini bukan hari biasa. Hari ini adalah hari ketika seseorang yang spesial lahir ke dunia.</p>
+        <div class="card birthday-card">
+          <div class="big-heart">♡</div>
+          <h3>Happy 20th Birthday, Sayang!</h3>
+          <p>Semoga hari ini dipenuhi hal-hal baik, senyum yang tulus, dan kebahagiaan yang nggak ada habisnya. You deserve all the beautiful things in this world.</p>
+        </div>
+      </section>
+
+      <section class="section" data-title="My favorite person">
+        <div class="eyebrow" style="text-align:center">A little gallery</div>
+        <h2>My Favorite Person</h2>
+        
+        <!-- GANTI placeholder dengan foto Intan. Contoh: <img src="images/intan1.jpg" alt="Intan"> -->
+        <div class="gallery">
+          <div class="photo-slot"><img src="img/1.webp" decoding="async"><small>Pretty little moments</small></div>
+          <div class="photo-slot"><img src="img/3.webp" decoding="async"><small>My favorite smile</small></div>
+          <div class="photo-slot"><img src="img/2.webp" decoding="async"><small>Simply beautiful</small></div>
+          <div class="photo-slot"><img src="img/4.jpg" decoding="async"><small>Always lovely</small></div>
+        </div>
+      </section>
+
+      <section class="section" data-title="A letter for you">
+        <div class="eyebrow" style="text-align:center">From my heart</div>
+        <h2>A Letter For You</h2>
+        <p class="lead">Ada sedikit pesan yang ingin aku sampaikan di hari spesialmu ini.</p>
+        <div class="letter-envelope" id="letterEnvelope" role="button" tabindex="0" aria-label="Buka surat">
+          <span class="envelope">💌</span>
+          <span style="color:var(--pink);font-size:.85rem">Tap to open your letter</span>
+        </div>
+        <article class="letter-paper" id="letterPaper">
+          <p>Happy birthday, sayangku.</p>
+          <p>Selamat bertambah usia yang ke-20. Di hari spesial ini, aku berharap kamu selalu dikelilingi hal-hal baik dan orang-orang yang tulus menyayangimu. Semoga setiap langkah yang kamu ambil membawa kamu lebih dekat dengan semua impian yang ingin kamu capai.</p>
+          <p>Aku berdoa semoga kamu selalu diberi kesehatan, hati yang tenang, urusan yang dimudahkan, dan banyak alasan untuk tersenyum. Kalau ada hari yang terasa berat, semoga kamu selalu punya kekuatan untuk melewatinya. Jangan lupa untuk tetap menyayangi diri sendiri dan bangga dengan setiap proses yang sudah kamu lalui.</p>
+          <p>Thank you for being you. I hope this new chapter brings you endless happiness, beautiful memories, and everything your heart has been wishing for. Jangan pernah merasa kurang berharga, karena kamu punya banyak hal indah dalam dirimu.</p>
+          <p>Enjoy your day, sayang. Hari ini dan seterusnya, semoga bahagia selalu menemukan jalannya ke kamu.</p>
+          <p class="sign">With love, sayangnya kamu ♡</p>
+        </article>
+      </section>
+
+      <section class="section" data-title="My wishes for you">
+        <div class="eyebrow" style="text-align:center">For your new chapter</div>
+        <h2>My Wishes For You</h2>
+        <p class="lead">Untuk usia baru, ada banyak hal baik yang aku harapkan datang ke hidupmu.</p>
+        <div class="wish-list">
+          <div class="wish"><b>♡</b><span>Semoga kamu selalu sehat, panjang umur, dan punya banyak waktu untuk menikmati hal-hal yang kamu suka.</span></div>
+          <div class="wish"><b>♡</b><span>Semoga semua impian dan rencana baikmu satu per satu bisa terwujud, dengan proses yang dimudahkan.</span></div>
+          <div class="wish"><b>♡</b><span>Semoga kamu selalu dikelilingi orang-orang yang menghargai, mendukung, dan menyayangimu dengan tulus.</span></div>
+          <div class="wish"><b>♡</b><span>Semoga kamu nggak kehilangan alasan untuk tersenyum, bahkan di tengah hari-hari yang melelahkan.</span></div>
+          <div class="wish"><b>♡</b><span>And most importantly, may you always find reasons to love yourself and be proud of who you are.</span></div>
+        </div>
+      </section>
+
+      <section class="section" data-title="One last surprise">
+        <div class="eyebrow" style="text-align:center">One last thing</div>
+        <h2>A Little Surprise</h2>
+        <p class="lead">Sebelum hadiah kecil ini selesai, ada satu hal lagi yang ingin aku kasih tahu.</p>
+        <div class="card final-card">
+          <div class="final-heart">♡</div>
+          <h3>If I Could Give You One Thing...</h3>
+          <p>It would be a lifetime of happiness.</p>
+          <p>Semoga dunia selalu punya cara untuk membuatmu bahagia, sayang. Keep shining, keep smiling, and never stop being the wonderful person you are.</p>
+          <h3 style="font-size:1.55rem;margin-top:25px">Happy Birthday pacarnya aku.</h3>
+          <p>20 looks beautiful on you. ♡</p>
+        </div>
+      </section>
+
+      <div class="controls">
+        <button class="btn" id="backBtn" disabled>← Back</button>
+        <button class="btn primary" id="nextBtn">Next →</button>
+      </div>
+      <div class="footer">Made especially for Intan · 24.11.2026</div>
+    </div>
+  </main>
+
+  <script>
+    // Waktu buka: 24 November 2026 pukul 00.00 WIB (UTC+7).
+    // 00.00 WIB = 17.00 UTC pada 23 November 2026.
+    const UNLOCK_AT = new Date('2026-11-23T17:00:00Z').getTime();
+
+    const lockScreen = document.getElementById('lockScreen');
+    const birthdayContent = document.getElementById('birthdayContent');
+    let unlocked = false;
+
+    const pad = n => String(n).padStart(2, '0');
+
+    function unlockSite() {
+      if (unlocked) return;
+      unlocked = true;
+      lockScreen.style.display = 'none';
+      birthdayContent.classList.add('unlocked');
+      showSection(0);
+      makeConfetti(65);
+    }
+
+    function updateCountdown() {
+      const remaining = UNLOCK_AT - Date.now();
+      if (remaining <= 0) {
+        unlockSite();
+        return;
+      }
+      const days = Math.floor(remaining / 86400000);
+      const hours = Math.floor((remaining % 86400000) / 3600000);
+      const minutes = Math.floor((remaining % 3600000) / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000);
+      document.getElementById('days').textContent = pad(days);
+      document.getElementById('hours').textContent = pad(hours);
+      document.getElementById('minutes').textContent = pad(minutes);
+      document.getElementById('seconds').textContent = pad(seconds);
+    }
+    const sections = [...document.querySelectorAll('.section')];
+    let current = 0;
+    function showSection(index) {
+      current = Math.max(0, Math.min(index, sections.length - 1));
+      sections.forEach((section, i) => section.classList.toggle('active', i === current));
+      document.getElementById('sectionLabel').textContent =
+        `${pad(current + 1)} / ${pad(sections.length)} · ${sections[current].dataset.title}`;
+      document.getElementById('progressPercent').textContent =
+        `${Math.round(((current + 1) / sections.length) * 100)}%`;
+      document.getElementById('progressFill').style.width =
+        `${((current + 1) / sections.length) * 100}%`;
+      document.getElementById('backBtn').disabled = current === 0;
+      document.getElementById('nextBtn').textContent =
+        current === sections.length - 1 ? 'Back to start ↺' : 'Next →';
+      document.querySelectorAll('#heartNav button').forEach((button, i) => {
+        button.classList.toggle('active', i === current);
+        button.classList.toggle('visited', i < current);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.getElementById('backBtn').addEventListener('click', () => showSection(current - 1));
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      if (current === sections.length - 1) showSection(0);
+      else showSection(current + 1);
+    });
+    document.querySelectorAll('#heartNav button').forEach(button => {
+      button.addEventListener('click', () => showSection(Number(button.dataset.go)));
+    });
+
+    const letterEnvelope = document.getElementById('letterEnvelope');
+    const letterPaper = document.getElementById('letterPaper');
+    function toggleLetter() {
+      letterPaper.classList.toggle('show');
+      letterEnvelope.querySelector('.envelope').textContent =
+        letterPaper.classList.contains('show') ? '💗' : '💌';
+      letterEnvelope.querySelector('span:last-child').textContent =
+        letterPaper.classList.contains('show') ? 'Tap to close your letter' : 'Tap to open your letter';
+    }
+    letterEnvelope.addEventListener('click', toggleLetter);
+    letterEnvelope.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleLetter();
+      }
+    });
+
+    function makeConfetti(amount) {
+      const symbols = ['♥', '✦', '✿', '•'];
+      const fragment = document.createDocumentFragment();
+      const pieces = [];
+      for (let i = 0; i < amount; i++) {
+        const piece = document.createElement('span');
+        piece.className = 'confetti';
+        piece.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.color = ['#f4a8c8', '#ffd6e7', '#d879a5', '#fff0f5'][Math.floor(Math.random() * 4)];
+        piece.style.fontSize = (10 + Math.random() * 12) + 'px';
+        piece.style.animationDuration = (3 + Math.random() * 4) + 's';
+        fragment.appendChild(piece);
+        pieces.push(piece);
+      }
+      document.body.appendChild(fragment);
+      pieces.forEach(piece => setTimeout(() => piece.remove(), 7500));
+    }
+
+    // Jalankan countdown setelah seluruh elemen dan navigasi siap.
+    updateCountdown();
+    window.setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
